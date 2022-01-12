@@ -1,3 +1,12 @@
+// Question source: hackerrank - encryption
+// link: https://www.hackerrank.com/challenges/encryption/problem
+// 
+
+// compile cmd
+// - ubuntu: gcc -Wall -g3 encryption.c -o encryption -lm
+// - mac osx: gcc -Wall -g3 encryption.c -o encryption
+// 
+
 #include <assert.h>
 #include <ctype.h>
 #include <limits.h>
@@ -8,6 +17,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#ifndef max
+    #define max(a,b) ((a) > (b) ? (a) : (b))
+#endif
 
 char* readline();
 char* encryption(char* s);
@@ -107,15 +120,14 @@ char* readline() {
  *
  */
 char* encryption(char* s) {
-    char* str_enp = malloc(100 * sizeof(char));
-    char* str_nospace = malloc(100 * sizeof(char));
+    char* str_enp = (char *)malloc(100 * sizeof(char));
+    char* str_nospace = (char *)malloc(100 * sizeof(char));
     int i = 0;
-    int j = 0;
     int length = 0;
     int row;
     int column;
-    int old_index;
     int new_index;
+    int new_align = 0;
 
     while (s[i] != '\0')
     {
@@ -128,7 +140,11 @@ char* encryption(char* s) {
     }
 
     row = sqrt(length);
-    column = row + 1;
+    column = row;
+    if (row * column < length)
+    {
+        column = row + 1;
+    }
     
     if (row * column < length)
     {
@@ -139,16 +155,18 @@ char* encryption(char* s) {
 
     while (i < (row + 1) * column)
     {
-        new_index = i % (row + 1) * column + i / column;
+        new_align = max(0, i % column - (length - 1) % column - 1);
+
+        new_index = i % column * (row + 1) + i / column - new_align;
 
         if (i < length)
         {
             str_enp[new_index] = str_nospace[i];
         }
-        else if (i / (column + 1) > row && i < (length + column))
+        else if (i < (length + column))
         {
             // Any index larger than (length + column) shouldn't have value
-            if (i % (row + 1) == column)
+            if (i % column == (column - 1))
             {
                 // The last column of the encrypted string that needs to be the terminator
                 str_enp[new_index] = '\0';
