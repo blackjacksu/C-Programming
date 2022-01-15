@@ -9,5 +9,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifndef max
+    #define max(a,b) ((a) > (b) ? (a) : (b))
+#endif
+
 char* readline();
 char* encryption(char* s);

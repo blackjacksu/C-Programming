@@ -58,7 +58,7 @@ int test_merge_sorted_list()
 
 int test_string_encryption()
 {
-    FILE* fptr = fopen("string_encryption.txt", "w");
+    FILE* fptr = fopen("encrypted.txt", "w");
 
     char* s = readline();
 

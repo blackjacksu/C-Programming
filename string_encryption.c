@@ -27,36 +27,66 @@
  *
  */
 char* encryption(char* s) {
-    char* str_enp = malloc(100 * sizeof(char));
+    char* str_enp = (char *)malloc(100 * sizeof(char));
+    char* str_nospace = (char *)malloc(100 * sizeof(char));
     int i = 0;
     int length = 0;
     int row;
     int column;
+    int new_index;
+    int new_align = 0;
 
     while (s[i] != '\0')
     {
-        // Calculate the string length
+        if (s[i] != ' ')
+        {
+            // Copy spaced-free string to new location 
+            str_nospace[length++] = s[i];
+        }
         i++;
     }
 
-    length = i;
     row = sqrt(length);
-    column = row + 1;
-    i = 0;
-    while (i < row*column && i < length)
+    column = row;
+    if (row * column < length)
     {
-        // Copying the encrypted string
-        // Row+1 is reserved for space
-        str_enp[i%column*(row+1) + i/column] = s[i];
+        column = row + 1;
+    }
+    
+    if (row * column < length)
+    {
+        row = column;
+    }
 
-        // Add space to reserved
-        if (i % row == 0)
+    i = 0;
+
+    while (i < (row + 1) * column)
+    {
+        new_align = max(0, i % column - (length - 1) % column - 1);
+
+        new_index = i % column * (row + 1) + i / column - new_align;
+
+        if (i < length)
         {
-            str_enp[i*(row+1)] = ' ';
+            str_enp[new_index] = str_nospace[i];
         }
-        else if (i == length)
+        else if (i < (length + column))
         {
-            str_enp[i] = '\0';
+            // Any index larger than (length + column) shouldn't have value
+            if (i % column == (column - 1))
+            {
+                // The last column of the encrypted string that needs to be the terminator
+                str_enp[new_index] = '\0';
+            }
+            else
+            {
+                // Add empty space
+                str_enp[new_index] = ' ';
+            }
+        }
+        else
+        {
+            // i >= (length + column)
         }
 
         i++;
